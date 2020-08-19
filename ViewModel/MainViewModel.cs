@@ -4,36 +4,29 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using WpfMvvmTest.Annotations;
 
-namespace WpfMvvmTest.ViewModel
-{
-    public sealed class MainViewModel : INotifyPropertyChanged
-    {
-        public MainViewModel()
-        {
+namespace WpfMvvmTest.ViewModel {
+    public sealed class MainViewModel : INotifyPropertyChanged {
+        public MainViewModel() {
             Number = 1;
         }
 
         private int _iNumber;
 
-        public int Number
-        {
+        public int Number {
             get => _iNumber;
-            set
-            {
+            set {
                 var iOldNumber = _iNumber;
 
                 _iNumber = value;
                 OnPropertyChanged(nameof(Number));
 
-                if (_iNumber > 0 && _iNumber <= 10)
-                {
+                if (_iNumber > 0 && _iNumber <= 10) {
                     OnPropertyChanged(nameof(MinusEnable));
                     OnPropertyChanged(nameof(PlusEnable));
 
                     PageContents = $"{value} 페이지를 보고 있어요";
                 }
-                else
-                {
+                else {
                     System.Windows.MessageBox.Show("1~10 페이지만 입략 가능합니다.");
                     _iNumber = iOldNumber;
                     OnPropertyChanged(nameof(Number));
@@ -44,8 +37,7 @@ namespace WpfMvvmTest.ViewModel
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
@@ -53,8 +45,7 @@ namespace WpfMvvmTest.ViewModel
 
         public ICommand MinusCommand => _minusCommand ?? (_minusCommand = new DelegateCommand(Minus));
 
-        private void Minus()
-        {
+        private void Minus() {
             Number--;
         }
 
@@ -62,18 +53,15 @@ namespace WpfMvvmTest.ViewModel
 
         public ICommand PlusCommand => _plusCommand ?? (_plusCommand = new DelegateCommand(Plus));
 
-        private void Plus()
-        {
+        private void Plus() {
             Number++;
         }
 
         private string _pageContents;
 
-        public string PageContents
-        {
+        public string PageContents {
             get => _pageContents;
-            set
-            {
+            set {
                 _pageContents = value;
                 OnPropertyChanged(nameof(PageContents));
             }
@@ -85,8 +73,7 @@ namespace WpfMvvmTest.ViewModel
 
     #region DelegateCommand Class
 
-    public class DelegateCommand : ICommand
-    {
+    public class DelegateCommand : ICommand {
         private readonly Func<bool> _canExecute;
         private readonly Action _execute;
 
@@ -94,17 +81,14 @@ namespace WpfMvvmTest.ViewModel
         /// Initializes a new instance of the DelegateCommand class.
         /// </summary>
         /// <param name="execute">indicate an execute function</param>
-        public DelegateCommand(Action execute) : this(execute, null)
-        {
-        }
+        public DelegateCommand(Action execute) : this(execute, null) { }
 
         /// <summary>
         /// Initializes a new instance of the DelegateCommand class.
         /// </summary>
         /// <param name="execute">execute function </param>
         /// <param name="canExecute">can execute function</param>
-        public DelegateCommand(Action execute, Func<bool> canExecute)
-        {
+        public DelegateCommand(Action execute, Func<bool> canExecute) {
             this._execute = execute;
             this._canExecute = canExecute;
         }
@@ -119,10 +103,8 @@ namespace WpfMvvmTest.ViewModel
         /// </summary>
         /// <param name="o">parameter by default of iCommand interface</param>
         /// <returns>can execute or not</returns>
-        public bool CanExecute(object o)
-        {
-            if (this._canExecute == null)
-            {
+        public bool CanExecute(object o) {
+            if (this._canExecute == null) {
                 return true;
             }
 
@@ -133,16 +115,14 @@ namespace WpfMvvmTest.ViewModel
         /// implement of icommand interface execute method
         /// </summary>
         /// <param name="o">parameter by default of iCommand interface</param>
-        public void Execute(object o)
-        {
+        public void Execute(object o) {
             this._execute();
         }
 
         /// <summary>
         /// raise ca excute changed when property changed
         /// </summary>
-        public void RaiseCanExecuteChanged()
-        {
+        public void RaiseCanExecuteChanged() {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
