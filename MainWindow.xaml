@@ -1,0 +1,23 @@
+﻿<Window x:Class="WpfMvvmTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:WpfMvvmTest.ViewModel"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance viewModel:MainViewModel, IsDesignTimeCreatable=True}"
+        Title="MainWindow" Height="350" Width="525">
+    <DockPanel>
+        <ToolBar DockPanel.Dock="Top">
+            <Button Content="-" Width="50"
+                    Command="{Binding MinusCommand}"
+                    IsEnabled="{Binding MinusEnable}" />
+            <TextBox Width="50"
+                     Text="{Binding Number, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="+" Width="50"
+                    Command="{Binding PlusCommand}"
+                    IsEnabled="{Binding PlusEnable}" />
+        </ToolBar>
+        <TextBox Text="{Binding PageContents}" />
+    </DockPanel>
+</Window>
