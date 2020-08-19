@@ -24,7 +24,7 @@ namespace WpfMvvmTest.ViewModel {
                     OnPropertyChanged(nameof(MinusEnable));
                     OnPropertyChanged(nameof(PlusEnable));
 
-                    PageContents = $"{value} 페이지를 보고 있어요";
+                    PageContents = $"{_iNumber} 페이지를 보고 있어요";
                 }
                 else {
                     System.Windows.MessageBox.Show("1~10 페이지만 입략 가능합니다.");
@@ -88,9 +88,9 @@ namespace WpfMvvmTest.ViewModel {
         /// </summary>
         /// <param name="execute">execute function </param>
         /// <param name="canExecute">can execute function</param>
-        public DelegateCommand(Action execute, Func<bool> canExecute) {
-            this._execute = execute;
-            this._canExecute = canExecute;
+        private DelegateCommand(Action execute, Func<bool> canExecute) {
+            _execute = execute;
+            _canExecute = canExecute;
         }
 
         /// <summary>
@@ -104,11 +104,7 @@ namespace WpfMvvmTest.ViewModel {
         /// <param name="o">parameter by default of iCommand interface</param>
         /// <returns>can execute or not</returns>
         public bool CanExecute(object o) {
-            if (this._canExecute == null) {
-                return true;
-            }
-
-            return this._canExecute();
+            return _canExecute == null || _canExecute();
         }
 
         /// <summary>
@@ -116,7 +112,7 @@ namespace WpfMvvmTest.ViewModel {
         /// </summary>
         /// <param name="o">parameter by default of iCommand interface</param>
         public void Execute(object o) {
-            this._execute();
+            _execute();
         }
 
         /// <summary>
