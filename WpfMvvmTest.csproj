@@ -34,9 +34,27 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="HidSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>packages\HidSharp.2.1.0\lib\net35\HidSharp.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="mscorlib" />
+        <Reference Include="OpenMacroBoard.SDK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>packages\OpenMacroBoard.SDK.2.0.0\lib\netstandard2.0\OpenMacroBoard.SDK.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+        <Reference Include="StreamDeckSharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>packages\StreamDeckSharp.2.0.0\lib\netstandard2.0\StreamDeckSharp.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
+        <Reference Include="System.Drawing" />
+        <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+          <HintPath>packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="System.Xml" />
         <Reference Include="System.Xaml">
             <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -51,6 +69,7 @@
             <SubType>Designer</SubType>
         </ApplicationDefinition>
         <Compile Include="Properties\Annotations.cs" />
+        <Compile Include="StreamDeck.cs" />
         <Compile Include="ViewModel\MainViewModel.cs" />
         <Page Include="MainWindow.xaml">
             <Generator>MSBuild:Compile</Generator>
@@ -81,6 +100,7 @@
     </ItemGroup>
     <ItemGroup>
         <None Include="App.config" />
+        <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

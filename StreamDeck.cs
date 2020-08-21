@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Drawing;
+using OpenMacroBoard.SDK;
+using StreamDeckSharp;
+
+namespace WpfMvvmTest {
+    public static class StreamDeck {
+        private static IStreamDeckBoard _deck;
+
+        public static IStreamDeckBoard Deck {
+            get {
+                if (_deck != null) return _deck;
+
+                _deck = StreamDeckSharp.StreamDeck.OpenDevice();
+                AppDomain.CurrentDomain.ProcessExit += (s, e) => { Deck_Clear(); };
+                _deck.ConnectionStateChanged += (s, e) => { ConnectionStateChanged(e); };
+                return _deck;
+            }
+        }
+
+        private static ObservableCollection<KeyBitmap> _bitmaps;
+
+        public static ObservableCollection<KeyBitmap> Bitmaps {
+            get {
+                if (_bitmaps != null)
+                    return _bitmaps;
+
+                _bitmaps = new ObservableCollection<KeyBitmap>();
+                for (var i = 0; i < _deck.Keys.Count; i++) {
+                    _bitmaps.Add(KeyBitmap.Black);
+                }
+
+                _bitmaps.CollectionChanged += (obj, s) => { Refresh(); };
+                return _bitmaps;
+            }
+        }
+
+        private static void ConnectionStateChanged(ConnectionEventArgs eventArgs) {
+            if (eventArgs.NewConnectionState) {
+                Refresh();
+            }
+        }
+
+        private static void Refresh() {
+            for (var i = 0; i < _deck.Keys.Count; i++) {
+                _deck.SetKeyBitmap(i, _bitmaps[i % _bitmaps.Count]);
+            }
+        }
+
+        private static void Deck_Clear() {
+            _deck.ShowLogo();
+        }
+
+        public static KeyBitmap ConvertTextToImage(string txt, string fontName, int fontsize, Color bgColor,
+            Color fColor, int width, int height) {
+            var bmp = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(bmp)) {
+                var font = new Font(fontName, fontsize);
+                graphics.FillRectangle(new SolidBrush(bgColor), 0, 0, bmp.Width, bmp.Height);
+                graphics.DrawString(txt, font, new SolidBrush(fColor), 0, 0);
+                graphics.Flush();
+                font.Dispose();
+                graphics.Dispose();
+            }
+
+            return KeyBitmap.Create.FromBitmap(bmp);
+        }
+    }
+}
