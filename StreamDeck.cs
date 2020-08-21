@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Drawing;
 using OpenMacroBoard.SDK;
 using StreamDeckSharp;
+using WpfMvvmTest.Annotations;
 
 namespace WpfMvvmTest {
     public static class StreamDeck {
@@ -31,20 +33,25 @@ namespace WpfMvvmTest {
                     _bitmaps.Add(KeyBitmap.Black);
                 }
 
-                _bitmaps.CollectionChanged += (obj, s) => { Refresh(); };
+                _bitmaps.CollectionChanged += (obj, e) => { NotifyCollectionChangedEventHandler(e); };
                 return _bitmaps;
             }
         }
 
         private static void ConnectionStateChanged(ConnectionEventArgs eventArgs) {
             if (eventArgs.NewConnectionState) {
-                Refresh();
+                NotifyCollectionChangedEventHandler(null);
             }
         }
 
-        private static void Refresh() {
-            for (var i = 0; i < _deck.Keys.Count; i++) {
-                _deck.SetKeyBitmap(i, _bitmaps[i % _bitmaps.Count]);
+        private static void NotifyCollectionChangedEventHandler([CanBeNull] NotifyCollectionChangedEventArgs e) {
+            if (e == null) {
+                for (var i = 0; i < _deck.Keys.Count; i++) {
+                    _deck.SetKeyBitmap(i, _bitmaps[i % _bitmaps.Count]);
+                }
+            }
+            else {
+                _deck.SetKeyBitmap(e.NewStartingIndex, _bitmaps[e.NewStartingIndex % _bitmaps.Count]);
             }
         }
 
@@ -53,12 +60,21 @@ namespace WpfMvvmTest {
         }
 
         public static KeyBitmap ConvertTextToImage(string txt, string fontName, int fontsize, Color bgColor,
-            Color fColor, int width, int height) {
-            var bmp = new Bitmap(width, height);
+            Color fColor) {
+            var bmp = new Bitmap(72, 72);
             using (var graphics = Graphics.FromImage(bmp)) {
-                var font = new Font(fontName, fontsize);
+                var fColorBrush = new SolidBrush(fColor);
+
                 graphics.FillRectangle(new SolidBrush(bgColor), 0, 0, bmp.Width, bmp.Height);
-                graphics.DrawString(txt, font, new SolidBrush(fColor), 0, 0);
+
+                var font = new Font(fontName, fontsize);
+                var background = new Rectangle(0, 0, bmp.Width, bmp.Height);
+                var stringFormat = new StringFormat {
+                    Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center
+                };
+                graphics.DrawString(txt, font, fColorBrush, background, stringFormat);
+                graphics.DrawRectangle(new Pen(fColorBrush), background);
+
                 graphics.Flush();
                 font.Dispose();
                 graphics.Dispose();
